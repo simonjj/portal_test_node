@@ -31,8 +31,17 @@ jobs:
           tenant-id: ${{ secrets.C2CNODE2_AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.C2CNODE2_AZURE_SUBSCRIPTION_ID }}
 
+      - name: Clone test repo with azure-cli-extensions whl
+        uses: actions/checkout@v3
+        with: 
+         repository: snehapar9/test
+         path: azure-cli-extensions
+      
+      - name: Install latest azure-cli-extensions whl
+        run: az extension add -y --source '${{ github.workspace }}/azure-cli-extensions/containerapp-0.3.47-py2.py3-none-any.whl'
+
       - name: Build and push container image to registry
-        uses: azure/container-apps-deploy-action@v2
+        uses: azure/container-apps-deploy-action@b8ae94a58470baf9b0d4c1ebd8cfeffd25931760
         with:
           appSourcePath: ${{ github.workspace }} 
           registryUrl: 
@@ -41,7 +50,5 @@ jobs:
           containerAppName: c2c-node-2
           resourceGroup: simonj-c2c-node-2
           imageToBuild: default/[parameters('containerAppName')]:${{ github.sha }}
-          _buildArgumentsKey_: |
-            _buildArgumentsValues_
 
 
